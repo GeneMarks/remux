@@ -1,9 +1,10 @@
 # remux features
-- Console app that automates remuxing of single video files or whole folders to mkv using **mkvmerge**
+- Console app that automates remuxing of single video files or whole folders to mkv using **mkvmerge** for Windows
 - Optionally recursively remux folders
 - Moves src files to recycle bin after remuxing
 
 ## Prerequisites
+- Windows machine
 - Must have [mkvmerge](https://mkvtoolnix.download/downloads.html#windows) path in environment variables
 
 ## Usage
