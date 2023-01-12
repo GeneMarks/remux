@@ -3,10 +3,6 @@ namespace Remux;
 
 class Remuxer
 {
-    string input;
-    string dir;
-    string filename;
-
     public void Remux(string[] args)
     {
         Command command = new Command();
@@ -14,29 +10,16 @@ class Remuxer
 
         if (command.isValidCommand)
         {
-            input = command.input;
-            dir = Path.GetDirectoryName(input);
-            filename = Path.GetFileNameWithoutExtension(input);
-            string remuxCommand;
-
             if (command.isDir)
             {
                 foreach (string f in command.GetVideoFiles())
                 {
-                    dir = Path.GetDirectoryName(f);
-                    filename = Path.GetFileNameWithoutExtension(f);
-                    remuxCommand = "/C mkvmerge -o \"" + dir + "\\" + filename + ".mkv\" \"" + f + "\"";
-                    
-                    System.Diagnostics.Process.Start("cmd.exe", remuxCommand).WaitForExit();
-                    Cleanup(f);
+                    Process(f);
                 }
             }
             else
             {
-                remuxCommand = "/C mkvmerge -o \"" + dir + "\\" + filename + ".mkv\" \"" + input + "\"";
-                
-                System.Diagnostics.Process.Start("cmd.exe", remuxCommand).WaitForExit();
-                Cleanup(input);
+                Process(command.input);
             }
 
             Logger.LogMsg(
@@ -44,33 +27,45 @@ class Remuxer
                 "Done!"
             );
         }
-    }
 
-    private void Cleanup(string fileToDel)
-    {
-        try
+        void Process(string inFile)
         {
-            // janky check to see if remux was "successful" before deleting src
-            if (File.Exists(dir + "\\" + filename + ".mkv"))
+            string outFile()
             {
-                Logger.LogMsg(
-                    ConsoleColor.Yellow,
-                    "Deleting input file: " + fileToDel
-                );
-                FileSystem.DeleteFile(
-                    fileToDel,
-                    UIOption.AllDialogs,
-                    RecycleOption.SendToRecycleBin
-                );
+                string dir = Path.GetDirectoryName(inFile);
+                string filename = Path.GetFileNameWithoutExtension(inFile);
+
+                return dir + "\\" + filename + ".mkv";
             }
-            else
+            string remuxCommand = "/C mkvmerge -o \"" + outFile() + "\" \"" + inFile + "\"";
+
+            try
             {
-                throw new Exception("Unable to delete input file.");
+                // run mkvmerge
+                System.Diagnostics.Process.Start("cmd.exe", remuxCommand).WaitForExit();
+
+                // janky check to see if remux was "successful" before deleting src
+                if (File.Exists(outFile()))
+                {
+                    Logger.LogMsg(
+                        ConsoleColor.Yellow,
+                        "Deleting input file: " + inFile
+                    );
+                    FileSystem.DeleteFile(
+                        inFile,
+                        UIOption.AllDialogs,
+                        RecycleOption.SendToRecycleBin
+                    );
+                }
+                else
+                {
+                    throw new Exception("Unable to delete input file.");
+                }
             }
-        }
-        catch (Exception ex)
-        {
-            Logger.LogError(ex);
+            catch (Exception ex)
+            {
+                Logger.LogError(ex);
+            }
         }
     }
 }
