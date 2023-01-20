@@ -53,7 +53,7 @@ class Remuxer
                     );
                     FileSystem.DeleteFile(
                         inFile,
-                        UIOption.AllDialogs,
+                        UIOption.OnlyErrorDialogs,
                         RecycleOption.SendToRecycleBin
                     );
                 }
