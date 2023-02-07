@@ -8,18 +8,17 @@ class Remuxer
         Command command = new Command();
         command.ParseCommand(args);
 
-        if (command.isValidCommand)
-        {
-            if (command.isDir)
-                foreach (string f in command.GetVideoFiles()) Process(f);
-            else
-                Process(command.input);
+        if (!command.isValidCommand) return;
 
-            Logger.LogMsg(
-                ConsoleColor.Green,
-                "Done!"
-            );
-        }
+        if (command.isDir)
+            foreach (string f in command.GetVideoFiles()) Process(f);
+        else
+            Process(command.input);
+
+        Logger.LogMsg(
+            ConsoleColor.Green,
+            "Done!"
+        );
 
         void Process(string inFile)
         {
