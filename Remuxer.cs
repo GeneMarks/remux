@@ -11,16 +11,9 @@ class Remuxer
         if (command.isValidCommand)
         {
             if (command.isDir)
-            {
-                foreach (string f in command.GetVideoFiles())
-                {
-                    Process(f);
-                }
-            }
+                foreach (string f in command.GetVideoFiles()) Process(f);
             else
-            {
                 Process(command.input);
-            }
 
             Logger.LogMsg(
                 ConsoleColor.Green,
@@ -58,9 +51,7 @@ class Remuxer
                     );
                 }
                 else
-                {
                     throw new Exception("Unable to delete input file.");
-                }
             }
             catch (Exception ex)
             {

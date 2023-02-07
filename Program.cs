@@ -11,9 +11,7 @@ class Program
         {
             string mkvPath = new PathFinder().GetFullPath("mkvmerge.exe");
             if (string.IsNullOrEmpty(mkvPath))
-            {
                 throw new Exception("mkvmerge not installed as environment variable!");
-            }
 
             new Remuxer().Remux(args);
         }
